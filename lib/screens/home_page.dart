@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dragable_card/cubit/pages_cubit.dart';
+import 'package:dragable_card/cubit/pages_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,18 +23,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.read<PagesCubit>();
-    return Scaffold(
-      body: CarouselSlider(
-        carouselController: viewModel.carouselController,
-        items: viewModel.pages
-            .map(
-              (page) => PageTemplate(pageModel: page),
-            )
-            .toList(),
-        options: CarouselOptions(
-          height: MediaQuery.of(context).size.height,
+    return BlocBuilder<PagesCubit, PagesState>(builder: (context, _) {
+      return Scaffold(
+        body: CarouselSlider(
+          carouselController: viewModel.carouselController,
+          items: viewModel.pages
+              .map(
+                (page) => PageTemplate(pageModel: page),
+              )
+              .toList(),
+          options: CarouselOptions(
+            height: MediaQuery.of(context).size.height,
+            onPageChanged: (index, _) {
+              viewModel.currentPageIndex = index;
+            },
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

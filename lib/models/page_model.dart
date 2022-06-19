@@ -12,4 +12,14 @@ class PageModel {
     required this.cardsColor,
     required this.cardList,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PageModel &&
+          runtimeType == other.runtimeType &&
+          title == other.title;
+
+  @override
+  int get hashCode => title.hashCode;
 }

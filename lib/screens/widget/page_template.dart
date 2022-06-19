@@ -1,6 +1,7 @@
 import 'package:dragable_card/cubit/pages_cubit.dart';
 import 'package:dragable_card/models/page_model.dart';
 import 'package:dragable_card/screens/widget/card_widget.dart';
+import 'package:dragable_card/screens/widget/target_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -57,12 +58,16 @@ class _PageTemplateState extends State<PageTemplate> {
                 controller: controller,
                 itemCount: widget.pageModel.cardList.length,
                 itemBuilder: (_, i) {
-                  return DragTarget(
+                  return DragTarget<TargetModel>(
                     onAccept: (value) {
-                      print("onAccept $value");
-                      // setState(() {
-                      //   widget.add("$value");
-                      // });
+                      int pageIndex = viewModel.pages.indexOf(value.pageModel);
+                      final card =
+                          viewModel.pages[pageIndex].cardList[value.cardIndex];
+                      viewModel.pages[pageIndex].cardList
+                          .removeAt(value.cardIndex);
+                      viewModel.pages[viewModel.currentPageIndex].cardList
+                          .add(card);
+                      viewModel.update();
                     },
                     onMove: (DragTargetDetails value) {
                       RenderBox? box = listKey.currentContext
@@ -87,8 +92,10 @@ class _PageTemplateState extends State<PageTemplate> {
                     },
                     builder: (_, __, ___) {
                       return CardWidget(
-                        cardModel: widget.pageModel.cardList[i],
-                        color: widget.pageModel.cardsColor,
+                        targetModel: TargetModel(
+                          cardIndex: i,
+                          pageModel: widget.pageModel,
+                        ),
                       );
                     },
                   );

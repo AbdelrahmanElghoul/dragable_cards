@@ -16,6 +16,8 @@ class PagesCubit extends Cubit<PagesState> {
 
   final double _scrollVOffset = 150;
   int _currentPageIndex = 0;
+  int get currentPageIndex => _currentPageIndex;
+  set currentPageIndex(int index) => _currentPageIndex = index;
   ScrollController? _scrollController;
   ScrollController? get scrollController => _scrollController;
 
@@ -26,6 +28,7 @@ class PagesCubit extends Cubit<PagesState> {
   }
 
   void scrollUp() {
+    if (scrollController?.hasClients != true) return;
     bool cantScrollTop = scrollController?.offset == 0 &&
         scrollController?.position.atEdge == true;
     if (cantScrollTop) return;
@@ -33,8 +36,9 @@ class PagesCubit extends Cubit<PagesState> {
   }
 
   void scrollVerticallyToOffset(double offset) {
+    if (scrollController?.hasClients != true) return;
+
     _debounceVScroll = Timer(const Duration(milliseconds: 300), () {
-      if (scrollController == null) return;
       double scrollToOffset = (scrollController?.offset ?? 0) + offset;
 
       scrollController?.animateTo(
@@ -46,10 +50,11 @@ class PagesCubit extends Cubit<PagesState> {
   }
 
   void scrollDown() {
+    if (scrollController?.hasClients != true) return;
+
     bool cantScrollDown = scrollController?.offset != 0 &&
         scrollController?.position.atEdge == true;
 
-    if (cantScrollDown) return;
     scrollVerticallyToOffset(_scrollVOffset);
   }
 
@@ -124,18 +129,14 @@ class PagesCubit extends Cubit<PagesState> {
   void nextPage() {
     _debounceHScroll = Timer(const Duration(milliseconds: 300), () {
       _carouselController?.nextPage();
-      _currentPageIndex = (_currentPageIndex++) % pages.length;
     });
   }
 
   void previousPage() {
     _debounceHScroll = Timer(const Duration(milliseconds: 300), () {
       _carouselController?.previousPage();
-      _currentPageIndex--;
-
-      if (_currentPageIndex < 0) {
-        _currentPageIndex = pages.length;
-      }
     });
   }
+
+  void update() => emit(Update());
 }

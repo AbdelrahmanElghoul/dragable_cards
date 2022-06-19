@@ -1,12 +1,11 @@
-import 'package:dragable_card/models/card_model.dart';
+import 'package:dragable_card/screens/widget/target_model.dart';
 import 'package:flutter/material.dart';
 
 class CardWidget extends StatefulWidget {
-  final CardModel cardModel;
-  final Color color;
+  final TargetModel targetModel;
+
   const CardWidget({
-    required this.color,
-    required this.cardModel,
+    required this.targetModel,
     Key? key,
   }) : super(key: key);
 
@@ -27,8 +26,8 @@ class _CardWidgetState extends State<CardWidget> {
       width: 200,
       height: 100,
       child: LayoutBuilder(builder: (context, constrain) {
-        return LongPressDraggable<CardModel>(
-          data: widget.cardModel,
+        return LongPressDraggable<TargetModel>(
+          data: widget.targetModel,
           ignoringFeedbackSemantics: false,
           maxSimultaneousDrags: 1,
           // widget appear when dragged
@@ -65,6 +64,7 @@ class _CardWidgetState extends State<CardWidget> {
   }
 
   Widget _card({Key? key}) {
+    final pageModel = widget.targetModel.pageModel;
     return Card(
       margin: const EdgeInsetsDirectional.all(10),
       shape: RoundedRectangleBorder(
@@ -73,9 +73,9 @@ class _CardWidgetState extends State<CardWidget> {
       child: Container(
         height: 100,
         width: 200,
-        color: widget.color,
+        color: pageModel.cardsColor,
         alignment: Alignment.center,
-        child: Text(widget.cardModel.name),
+        child: Text(pageModel.cardList[widget.targetModel.cardIndex].name),
       ),
     );
   }
